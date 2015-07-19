@@ -1,0 +1,47 @@
+# First implementation of the villager alert bot for the subreddit 
+# /r/AdoptMyVillager. Currently seeking a method of storing data in a cloud
+# (all methods are expensive) so as to not constantly iterate through all messages
+# to get request data (and also implement a good way of removing a user from
+# the system if requested.
+
+import praw 
+from time import sleep
+
+def collect(r):
+    users_dict = {}
+    inbox = r.get_unread(unset_has_mail=False, update_user=False)
+    for mail in inbox:
+        split_mail = str(mail).split(' ')
+        try:
+            user = split_mail[1]
+            villager = split_mail[2]
+            users_dict[user] = villager
+        except IndexError:
+            mail.reply("Sorry, the format of your message was incorrect!\
+            :( Remember it should be \"/u/Villager_Alert_Bot \
+            youreusername villagername \" ")
+            mail.mark_as_read()
+    return users_dict
+        
+    
+def main():
+    user_agent = "Villager_Alert_Bot"
+    r = praw.Reddit(user_agent=user_agent)
+    r.login('Villager_Alert_Bot', 'password')
+    users_dict = {}
+    users_dict = collect(r)
+    subreddit = r.get_subreddit('AdoptMyVillager')
+    complete = set()
+    for submission in subreddit.get_new(limit=10):
+        text = submission.selftext.lower()
+        has_villager = any(string in users_dict.values() for string in text)
+        for user in users_dict.keys():
+            if users_dict[user].lower() in text:
+                villager = users_dict[user]
+                message = "Hey there " + user + " , it looks like " + villager + " has been spotted on /r/AdoptMyVillager"
+                r.sendmessage(user,'Villager Found', message)
+                complete.add(submission.id)
+
+while True:
+    main()
+    sleep(2)
