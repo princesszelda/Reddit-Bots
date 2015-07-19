@@ -30,18 +30,19 @@ def main():
     r.login('Villager_Alert_Bot', 'password')
     users_dict = {}
     users_dict = collect(r)
+    print(users_dict)
     subreddit = r.get_subreddit('AdoptMyVillager')
-    complete = set()
     for submission in subreddit.get_new(limit=10):
         text = submission.selftext.lower()
         has_villager = any(string in users_dict.values() for string in text)
         for user in users_dict.keys():
-            if users_dict[user].lower() in text:
+            if users_dict[user].lower() in text and submission.id not in complete:
                 villager = users_dict[user]
-                message = "Hey there " + user + " , it looks like " + villager + " has been spotted on /r/AdoptMyVillager"
-                r.sendmessage(user,'Villager Found', message)
-                complete.add(submission.id)
+                message = "Hey there " + user + ", it looks like " + villager + " has been spotted on /r/AdoptMyVillager"
+                r.send_message(user,'Villager Found', message)
+        complete.add(submission.id)
 
+complete = set()
 while True:
     main()
     sleep(2)
