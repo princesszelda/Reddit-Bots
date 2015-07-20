@@ -1,21 +1,38 @@
 # First implementation of the villager alert bot for the subreddit 
 # /r/AdoptMyVillager. Currently seeking a method of storing data in a cloud
 # (all methods are expensive) so as to not constantly iterate through all messages
-# to get request data (and also implement a good way of removing a user from
-# the system if requested.
+# to get request data
+# 
+# Usage: to request a villager, simply comment anywhere on reddit 
+# "/u/Villager_Alert_Bot yourusername villagername" To remove a request for 
+# a villager comment anywhere on reddit "/u/Villager_Alert_Bot delete username"
+# Make sure you spell your username and the villager name correctly! The 
+# bot does not check for that and only uses what you give it. The bot will
+# reply if you enter too few parameters to tell you you did not provide it
+# enough information. Please don't reply to these comments (it shouldn't make 
+# a difference anyway, but to be safe it's better if you don't).
+#
+# Happy trading!
 
 import praw 
 from time import sleep
 
 def collect(r):
     users_dict = {}
-    inbox = r.get_unread(unset_has_mail=False, update_user=False)
+    inbox = r.get_unread()
     for mail in inbox:
         split_mail = str(mail).split(' ')
         try:
-            user = split_mail[1]
-            villager = split_mail[2]
-            users_dict[user] = villager
+            if split_mail[1].lower() != "delete":
+                user = split_mail[1]
+                villager = split_mail[2]
+                if user not in users_dict:
+                    users_dict[user] = villager
+            else:
+                user = split_mail[2]
+                for mail in inbox:
+                    if user in mail:
+                        mail.mark_as_read()
         except IndexError:
             mail.reply("Sorry, the format of your message was incorrect!\
             :( Remember it should be \"/u/Villager_Alert_Bot \
@@ -25,7 +42,9 @@ def collect(r):
         
     
 def main():
-    user_agent = "Villager_Alert_Bot"
+    user_agent = "Villager_Alert_Bot 1.1 by /u/TriforceofComputers \
+    Source code available at \
+    https://github.com/princesszelda/Reddit-Bots/blob/master/Villager%20Alert"
     r = praw.Reddit(user_agent=user_agent)
     r.login('Villager_Alert_Bot', 'password')
     users_dict = {}
@@ -33,16 +52,16 @@ def main():
     print(users_dict)
     subreddit = r.get_subreddit('AdoptMyVillager')
     for submission in subreddit.get_new(limit=10):
-        text = submission.selftext.lower()
-        has_villager = any(string in users_dict.values() for string in text)
+        text = submission.title.lower()
+        lf_only = "[lf]" in text # Filters through text posts just looking for the villager
         for user in users_dict.keys():
-            if users_dict[user].lower() in text and submission.id not in complete:
+            if users_dict[user].lower() in text and submission.id not in complete and not lf_only:
                 villager = users_dict[user]
                 message = "Hey there " + user + ", it looks like " + villager + " has been spotted on /r/AdoptMyVillager"
                 r.send_message(user,'Villager Found', message)
         complete.add(submission.id)
 
 complete = set()
-while True:
+#while True:
     main()
     sleep(2)
