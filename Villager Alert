@@ -62,6 +62,6 @@ def main():
         complete.add(submission.id)
 
 complete = set()
-#while True:
+while True:
     main()
     sleep(2)
