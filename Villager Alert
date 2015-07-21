@@ -9,7 +9,8 @@
 # Make sure you spell your username and the villager name correctly! The 
 # bot does not check for that and only uses what you give it. The bot will
 # reply if you enter too few parameters to tell you you did not provide it
-# enough information.
+# enough information. Please don't reply to these comments (it shouldn't make 
+# a difference anyway, but to be safe it's better if you don't).
 #
 # Happy trading!
 
@@ -41,12 +42,11 @@ def collect(r):
         
     
 def main():
-    user_agent = "Villager_Alert_Bot 1.1 by /u/TriforceofComputers \
+    user_agent = "Villager_Alert_Bot 1.1 by /u/TriforceofComputers. \
     Source code available at \
     https://github.com/princesszelda/Reddit-Bots/blob/master/Villager%20Alert"
     r = praw.Reddit(user_agent=user_agent)
     r.login('Villager_Alert_Bot', 'password')
-    users_dict = {}
     users_dict = collect(r)
     print(users_dict)
     subreddit = r.get_subreddit('AdoptMyVillager')
@@ -63,4 +63,4 @@ def main():
 complete = set()
 while True:
     main()
-    sleep(2)
+    sleep(60)
