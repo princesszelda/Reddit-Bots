@@ -64,7 +64,7 @@ def main():
     Source code available at \
     https://github.com/princesszelda/Reddit-Bots/blob/master/Villager%20Alert"
     r = praw.Reddit(user_agent=user_agent)
-    r.login('Villager_Alert_Bot', 'greenconurefeather')
+    r.login('Villager_Alert_Bot', 'password')
     users_dict = {}
     collect(r)
     requests = fileToDict()
