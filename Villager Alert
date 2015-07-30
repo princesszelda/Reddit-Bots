@@ -1,16 +1,17 @@
-# Udpated implementation of the villager alert bot for the subreddit 
+# BOT IS NOT UP DUE TO MACHINE IM RUNNING IT ON IS NOT UP
+#
+#Udpated implementation of the villager alert bot for the subreddit 
 # /r/AdoptMyVillager. Now stores data on file instead of constant parsing 
 # through messages, and you no longer need to enter your username! Also,
 # the bot recognizes villager names and will not store data if it is not a 
-# villager name.
+# villager name, and will instead respond to you informing you of your error.
 # 
 # Usage: to request a villager, simply comment anywhere on reddit 
 # "/u/Villager_Alert_Bot villagername" The bot will
 # reply if you enter too few parameters to tell you you did not provide it
-# enough information. Please don't reply to these comments (it shouldn't make 
-# a difference anyway, but to be safe it's better if you don't).
+# enough information. Currently, multiple requests are supported
 #
-# Happy trading!
+# Happy adopting!
 
 import praw 
 from time import sleep
